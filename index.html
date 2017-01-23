@@ -6,18 +6,40 @@
         <script src="https://unpkg.com/react@latest/dist/react.js"></script>
         <script src="https://unpkg.com/react-dom@latest/dist/react-dom.js"></script>
         <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
-        <link rel="stylesheet" href="css/style.css">
         <link rel="stylesheet" href="css/bootstrap.css">
+        <link rel="stylesheet" href="css/style.css">
     </head>
     <body>
         <div id="root"></div>
         <script type="text/babel">
             var Navbar = React.createClass({
+                change(page){
+                    this.props.change(page);
+                },
                 render(){
                     return (
-                        <div>
-                            <h2>Navbar Component</h2>
-                        </div>
+                        <nav className="navbar navbar-default">
+                            <div className="container">
+                                <div className="navbar-header">
+                                    <a href="#" className="navbar-brand">{this.props.brand}</a>
+                                </div>
+
+                                <div id="navbar">
+                                    <ul className="nav navbar-nav">
+                                        <li className={(this.props.currentPage === 'home') ? 'active' : ''}>
+                                            <a onClick={this.change.bind(this, 'home')}>Home</a>
+                                        </li>
+                                        <li className={(this.props.currentPage) === 'about' ? 'active' : ''}>
+                                            <a onClick={this.change.bind(this, 'about')}>About</a>
+                                        </li>
+                                        <li className={(this.props.currentPage) === 'contact' ? 'active' : ''}>
+                                            <a onClick={this.change.bind(this, 'contact')}>Contact</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                        </nav>
                     )
                 }
             });
@@ -26,7 +48,17 @@
                 render(){
                     return (
                         <div>
-                            <h2>Jumbotron Component</h2>
+                            <div className="jumbotron">
+                                <div className="container">
+                                    <h1>{this.props.heading}</h1>
+                                    <p className="lead">
+                                        {this.props.text}
+                                    </p>
+                                    <p className="lead">
+                                        <a href="#" className="btn btn-primary btn-lg" role="button">Learn More</a>
+                                    </p>
+                                </div>  
+                            </div>
                         </div>
                     )
                 }
@@ -34,21 +66,96 @@
 
             var Page = React.createClass({
                 render(){
+                    let pageContent;
+
+                    switch (this.props.currentPage){
+                        case 'home':
+                            pageContent = "Beard shabby chic four loko polaroid, " +
+                                "swag copper mug taxidermy live-edge single-origin coffee " +
+                                "migas blue bottle tacos organic. Migas affogato hoodie single-origin " +
+                                "coffee fap. Seitan deep v intelligentsia thundercats. Helvetica microdosing " +
+                                "cardigan, lumbersexual venmo bitters gastropub bespoke vaporware lo-fi cronut " +
+                                "normcore la croix food truck plaid. Selfies edison bulb helvetica, seitan " +
+                                "kinfolk affogato trust fund photo booth church-key iPhone chillwave " +
+                                "before they sold out you probably haven't heard of them. Authentic " +
+                                "helvetica cold-pressed, four dollar toast umami retro shoreditch " +
+                                "intelligentsia next level four loko blue bottle af. Authentic drinking " +
+                                "vinegar swag umami, +1 tbh iceland deep v gluten-free ethical franzen.";
+                            break;
+
+                        case 'about':
+                            pageContent = "Master cleanse drinking vinegar sriracha cardigan etsy. " +
+                                "Live-edge kale chips artisan, cold-pressed 3 wolf moon chillwave " +
+                                "wayfarers actually bitters tousled asymmetrical occupy. Pug affogato " +
+                                "four loko ugh. Helvetica kinfolk food truck, vape crucifix chambray " +
+                                "tumblr butcher tote bag waistcoat gentrify fashion axe enamel pin " +
+                                "distillery shoreditch. Pour-over swag jean shorts, dreamcatcher paleo " +
+                                "food truck austin yr. Gastropub pabst quinoa skateboard pinterest keytar, " +
+                                "lomo live-edge photo booth poke. Cray copper mug four loko, tote bag " +
+                                "asymmetrical chillwave poutine irony YOLO pabst tilde.";
+                            break;
+
+                        case 'contact':
+                            pageContent = "Dreamcatcher yr VHS tilde, ugh flexitarian everyday carry " +
+                                "drinking vinegar vaporware keytar you probably haven't heard of them lo-fi " +
+                                "pork belly. PBR&B sartorial polaroid artisan. Fam wolf +1, meh kale chips " +
+                                "slow-carb man braid taxidermy kitsch la croix. Heirloom cronut sustainable " +
+                                "blue bottle etsy, plaid kitsch aesthetic food truck lo-fi whatever cornhole " +
+                                "fanny pack lomo beard. Kale chips ugh messenger bag iceland, blog austin " +
+                                "pinterest listicle scenester authentic fam XOXO glossier kinfolk. " +
+                                "Synth succulents small batch, vinyl +1 hexagon hell of. Viral gluten-free " +
+                                "flexitarian hashtag.";
+                            break;
+                    }
+
                     return (
                         <div>
-                            <h2>Page Component</h2>
+                            <div className="container">
+                                <h2>{`${this.props.currentPage.charAt(0).toUpperCase()}${this.props.currentPage.slice(1)}`}</h2>
+                                {pageContent}
+                            </div>
                         </div>
                     )
                 }
             });
 
             var Theme = React.createClass({
+                handleChange(page){
+                    this.setState({
+                        currentPage: page
+                    });
+                },
+
+                getInitialState(){
+
+                    return {
+                        currentPage: 'home'
+                    }
+                },
+
+                getDefaultProps(){
+
+                    return {
+                        brand: 'Static React',
+                        heading: 'Static React Website Starter',
+                        text: 'Bet you didn\'t know this was Bootstrap!',
+                    }
+                },
+
                 render(){
+                    let jumbotron = '';
+
+                    if(this.state.currentPage === 'home'){
+                        jumbotron = <Jumbotron heading={this.props.heading} text={this.props.text} />
+                    } else {
+                        jumbotron = '';
+                    }
+
                     return (
                         <div>
-                            <Navbar/>
-                            <Jumbotron/>
-                            <Page/>
+                            <Navbar currentPage={this.state.currentPage} brand={this.props.brand} change={this.handleChange} />
+                            {jumbotron}
+                            <Page currentPage={this.state.currentPage} />
                         </div>
                     )
                 }
